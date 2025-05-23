@@ -1,0 +1,30 @@
+---
+title: "Single-cell RNA-seq Analysis"
+subtitle: "Single-cell RNA-seq Analysis on GEO data for USF Bioinformatician Role"
+format: 
+  html:
+    theme: cosmo
+    code-fold: true
+    toc: true
+author: Ethan Littlestone
+knitr: true
+---
+
+**I will be using Quarto, a super set of R Markdown for this Single-Cell RNA-seq Analysis. Quarto allows for the creation of detailed scientific reports (along with other formats like interactive web pages, dashboards, etc.) to help encourage collaboration and shareability of bioinformatics workflows.**
+
+**Along with Quarto, I will be using the package manager *pixi* for further reproducibility, as well as the data workflow software *snakemake* for handling input/output and making the analysis clear and easy to follow.**
+
+The following links give instructions for downloading/installing and using these helpful tools. 
+
+[Quarto](https://quarto.org/docs/get-started/)
+
+[Pixi](https://pixi.sh/latest/getting_started/)
+
+[Snakemake](https://snakemake.readthedocs.io/en/stable/)
+
+Once these tools are installed, the first step is to create a pixi environment.
+
+```{bash}
+pixi init sc_rna_seq_analysis --channel conda-forge --channel bioconda
+```
+
