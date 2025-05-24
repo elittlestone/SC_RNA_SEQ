@@ -22,9 +22,46 @@ The following links give instructions for downloading/installing and using these
 
 [Snakemake](https://snakemake.readthedocs.io/en/stable/)
 
-Once these tools are installed, the first step is to create a pixi environment.
+Once these tools are installed, the first step is to initialize a git repository for tracking file changes/updates and create a pixi environment.
 
-```{bash}
+```{bash Pixi/Git, eval = F, echo = T}
 pixi init sc_rna_seq_analysis --channel conda-forge --channel bioconda
+cd sc_rna_seq_analysis
+
+git init
+# Create a remote repository through github then add the remote repo
+git add remote origin https://github.com/elittlestone/SC_RNA_SEQ
+touch geo_single_cell_rna_analysis.qmd
+git add geo_single_cell_rna_analysis.qmd
+git commit -m "Adding quarto notebook to git repository"
+git push origin main
 ```
+
+**Adding necessary packages through pixi can be done as follows:**
+
+```{bash Add Packages, eval = F, echo = T}
+pixi add snakemake geofetch sra-tools
+```
+
+**For the rest of the analysis, our commands can either be run via pixi by doing: *pixi run 'executable'* or by launching a subshell with *pixi shell* and running commands as normal.**
+
+**Sratools is command-line tool that allows for the programmatic downloading of GEO data. This avoids having to download through the web and promotes reproducibility as well as error handling. Sratools comes with multiple programs, here we use the *prefetch* command. Running 'prefetch -h' after downloading sratools through pixi gives helpful instructions on how to use the tool as well as the variety of different flags/parameters that can be passed to this program. We use prefetch here in a snakemake script to download our rna-seq reads.**
+
+**I have created a configuration file where we can store hard-coded values which can then be referenced via our snakefile. This makes the process highly resistant to errors consistent with hard-coding filenames like typos. From the email that Dr. Zhang sent me that brings us to a GEO page, I then found the SRX accession ID. Providing this SRX or Sequence Reads Experiment id to the *prefetch* program will then download the appropriate raw sequencing data (SRR file). **
+
+[Sratools](https://github.com/ncbi/sra-tools)
+
+
+```{bash Snakefile for Downloading SRA files, eval = T, echo = T}
+snakefile="download_sra_files.smk"
+cat $snakefile
+```
+
+```{bash Download SRA files with snakemake, eval = F}
+snakemake -s download_sra_files.smk --cores 8 -p 
+```
+
+We can also go to the SRA Web Page for this particular entry and find lots of information. Again, we can get this meta data programmatically as well using *SRATools*
+[Sequence Read Archive Web Page](https://trace.ncbi.nlm.nih.gov/Traces/?view=run_browser&page_size=10&acc=SRR30255722&display=metadata)
+
 

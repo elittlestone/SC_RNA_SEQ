@@ -1,0 +1,14 @@
+[workspace]
+authors = ["Ethan Littlestone <ethanlittlestone@gmail.com>"]
+channels = ["conda-forge", "bioconda"]
+name = "sc_rna_seq_analysis"
+platforms = ["osx-64"]
+version = "0.1.0"
+
+[tasks]
+
+[dependencies]
+snakemake = ">=9.5.1,<10"
+entrez-direct = ">=22.4,<23"
+geofetch = ">=0.12.7,<0.13"
+sra-tools = ">=3.2.1,<4"
