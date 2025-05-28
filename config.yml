@@ -5,3 +5,7 @@ srr_ids:
 samples:
   - AL02
   - AL03
+
+reference: "data/cellranger/refdata-gex-GRCh38-2024-A"
+
+fastq_dir: "data/sra"

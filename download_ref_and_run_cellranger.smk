@@ -1,11 +1,15 @@
 configfile: "config.yaml"
-SAMPLES = configfile["samples"]
-SRR_IDS = configfile["srr_ids"]
+
+SAMPLES = config["samples"]
+SRR_IDS = config["srr_ids"]
+FASTQ_DIR = config["fastq_dir"]
+REFERENCE = config["reference"]
+
 rule all:
     input:
         "data/cellranger/human_reference.tar.gz",
-        "data/cellranger/cellranger-9.0.1.tar.gz"
-
+        "data/cellranger/cellranger-9.0.1.tar.gz",
+        expand("data/cellranger/{sample}/outs/filtered_feature_bc_matrix/barcodes.tsv.gz", sample = SAMPLES)
 
 rule download_reference:
     params:
@@ -34,7 +38,19 @@ rule download_cell_ranger:
         """
 
 rule run_cellranger_count:
-    input:
-        reference = "data/cellranger/refdata-gex-GRCh38-2024-A",
-        fastqs = "data/sra",
-        --sample=""
+  params:
+    sample = "{sample}",
+    fastqs = FASTQ_DIR,
+    transcriptome = REFERENCE
+  threads: 8
+  output:
+    output_file = "data/cellranger/{sample}/outs/filtered_feature_bc_matrix/barcodes.tsv.gz"
+  shell:
+    """
+    cellranger count --id="{params.sample}" \
+    --transcriptome="{params.transcriptome}" \
+    --fastqs="{params.fastqs}" \
+    --sample="{params.sample}" \
+    --localcores={threads}
+    """
+  
