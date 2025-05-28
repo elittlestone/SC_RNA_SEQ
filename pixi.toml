@@ -17,3 +17,4 @@ fastqc = ">=0.12.1,<0.13"
 multiqc = ">=1.29,<2"
 ncbi-datasets-cli = ">=18.2.0,<19"
 aspera-cli = { version = ">=3.9.6,<4", channel = "hcc" }
+ffq = ">=0.3.1,<0.4"
