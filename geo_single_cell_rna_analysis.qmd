@@ -42,7 +42,7 @@ git push origin main
 **Adding necessary packages through pixi can be done as follows:**
 
 ```{bash Add Packages, eval = F, echo = T}
-pixi add snakemake geofetch sra-tools ncbi-datasets-cli cellranger
+pixi add snakemake sra-tools
 ```
 
 **For the rest of the analysis, our commands can either be run via pixi by doing: *pixi run 'executable'* or by launching a subshell with *pixi shell* and running commands as normal.**
@@ -50,10 +50,7 @@ pixi add snakemake geofetch sra-tools ncbi-datasets-cli cellranger
 
 ## Downloading Raw Sequencing Data
 
-**Sratools is a suite of command-line tools that allows for the programmatic downloading of GEO data. This avoids having to download through the web and promotes reproducibility as well as error handling. Sratools comes with multiple programs, here we use the *fastq-dump* command. Running fastq-dump -h' after downloading sratools through pixi gives helpful instructions on how to use the tool as well as the variety of different flags/parameters that can be passed to this program. We use fastq-dump in a snakemake script to download our rna-seq reads and convert them to fastq format.**
-
-
-**Raw paired-read FASTQ files from this scRNA-seq experiment are available online under the GEO accession ID GSE. To obtain direct links to each of the 12 samples in bulk, we query this accession ID in SRA explorer, select the relevant samples, then download the metadata to a csv, shown below.**
+**Sratools is a suite of command-line tools that allows for the programmatic downloading of GEO data. This avoids having to download through the web and promotes reproducibility as well as error handling. Sratools comes with multiple programs, here we use the *fasterq-dump* command. Running fasterq-dump -h' after downloading sratools through pixi gives helpful instructions on how to use the tool as well as the variety of different flags/parameters that can be passed to this program. We use fasterq-dump in a snakemake script to download our rna-seq reads and convert them to fastq format (fasterq-dump handles the download and file format conversion for us).**
 
 
 **I have also created a configuration file where we can store hard-coded values which can then be referenced via our snakefile. This makes the process highly resistant to errors consistent with hard-coding file names. From the email that Dr. Zhang sent me that brings us to a GEO page, I then found the SRR accession ID. Providing this SRR to the *fastq-dump* program will then download the appropriate raw sequencing data.**
@@ -71,11 +68,13 @@ cat $snakefile
 snakemake -s download_sra_files.smk --cores 8 -p 
 ```
 
-We can also go to the SRA Web Page for this particular entry and find lots of information. Again, we can get this meta data programmatically as well using *SRATools*
+We can also go to the SRA Web Page for this particular entry and find useful information about the sequencing experiment and runs. Again, we can get this meta data programmatically as well using *SRATools*
 
 [Sequence Read Archive Web Page](https://trace.ncbi.nlm.nih.gov/Traces/?view=run_browser&page_size=10&acc=SRR30255722&display=metadata)
 
 ## Read Alignment and Transcript Quantification 
+
+**Reads 1 and 2 are technial reads, while read 3 contains our actual transcript (Read 1 is the index/barcode for demultiplexing, read2 is the UMI).**
 
 ### The next step is to download our reference human transcriptome as well as the cellranger tool from 10x genomics so we can align our raw reads and quantify them. 
 
