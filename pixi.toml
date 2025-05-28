@@ -1,8 +1,8 @@
 [workspace]
 authors = ["Ethan Littlestone <ethanlittlestone@gmail.com>"]
-channels = ["conda-forge", "bioconda", "hcc", "dranew"]
+channels = ["conda-forge", "bioconda", "rmg"]
 name = "sc_rna_seq_analysis"
-platforms = ["osx-64"]
+platforms = ["linux-64"]
 version = "0.1.0"
 
 [tasks]
@@ -16,4 +16,14 @@ trimmomatic = ">=0.39,<0.40"
 fastqc = ">=0.12.1,<0.13"
 multiqc = ">=1.29,<2"
 ncbi-datasets-cli = ">=18.2.0,<19"
-aspera-cli = { version = ">=3.9.6,<4", channel = "hcc" }
+tmux = ">=3.5,<4"
+eza = ">=0.21.3,<0.22"
+ruby = ">=3.4.2,<4"
+nvim = "0.9.*"
+rust = ">=1.87.0,<1.88"
+nodejs = ">=18"
+ripgrep = ">=14.1.1,<15"
+lazygit = ">=0.51.1,<0.52"
+git = ">=2.49.0,<3"
+gcc = ">=15.1.0,<15.2"
+unibilium = ">=2.1.2,<3"
