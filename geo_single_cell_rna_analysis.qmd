@@ -53,7 +53,7 @@ pixi add snakemake sra-tools
 **Sratools is a suite of command-line tools that allows for the programmatic downloading of GEO data. This avoids having to download through the web and promotes reproducibility as well as error handling. Sratools comes with multiple programs, here we use the *fasterq-dump* command. Running fasterq-dump -h' after downloading sratools through pixi gives helpful instructions on how to use the tool as well as the variety of different flags/parameters that can be passed to this program. We use fasterq-dump in a snakemake script to download our rna-seq reads and convert them to fastq format (fasterq-dump handles the download and file format conversion for us).**
 
 
-**I have also created a configuration file where we can store hard-coded values which can then be referenced via our snakefile. This makes the process highly resistant to errors consistent with hard-coding file names. From the email that Dr. Zhang sent me that brings us to a GEO page, I then found the SRR accession ID. Providing this SRR to the *fastq-dump* program will then download the appropriate raw sequencing data.**
+**I have also created a configuration file where we can store hard-coded values which can then be referenced via our snakefile. This makes the process highly resistant to errors consistent with hard-coding file names. From the email that Dr. Zhang sent me that brings us to a GEO page, I then found the SRR accession ID. Providing this SRR to the *fasterq-dump* program will then download the appropriate raw sequencing data.**
 
 [Sratools](https://github.com/ncbi/sra-tools)
 [Fastq-dump](https://rnnh.github.io/bioinfo-notebook/docs/fastq-dump.html)
@@ -74,15 +74,25 @@ We can also go to the SRA Web Page for this particular entry and find useful inf
 
 ## Read Alignment and Transcript Quantification 
 
-**Reads 1 and 2 are technial reads, while read 3 contains our actual transcript (Read 1 is the index/barcode for demultiplexing, read2 is the UMI).**
+**Reads 1 and 2 are technical reads, while read 3 contains our actual transcript (Read 1 is the index for demultiplexing, read2 is the Unique Molecular Identifier or UMI + barcode).**
 
-### The next step is to download our reference human transcriptome as well as the cellranger tool from 10x genomics so we can align our raw reads and quantify them. 
+### The next step is to download our reference human transcriptome as well as the cellranger softwrae tool from 10x genomics so we can align our raw reads and quantify them. 
 
 [Download CellRanger](https://www.10xgenomics.com/support/software/cell-ranger/downloads#download-links)
 
 **Here is an in-depth explanation of the CellRanger software [What is CellRanger?](https://www.scdiscoveries.com/blog/knowledge/cellranger/#what-it-is)**
 
 ```{bash Download Transcriptome and Run CellRanger, eval = F, echo = T}
-snakemake -s 
+snakemake -s download_ref_and_run_cellranger.smk --cores 1 -p
 ```
+
+**Cellranger is able to map our reads to the transcriptome and perform transcript quantification. The tool outputs an in-depth summary html file with detailed summary statistics.**
+
+## 📊 Cell Ranger Summary: AL02
+
+<iframe src="AL02_web_summary.html" width="100%" height="800px" style="border:none;"></iframe>
+
+## 📊 Cell Ranger Summary: AL03
+
+<iframe src="AL03_web_summary.html" width="100%" height="800px" style="border:none;"></iframe>
 
