@@ -1,4 +1,4 @@
-configfile: "config.yaml"
+configfile: "config.yml"
 
 SAMPLES = config["samples"]
 SRR_IDS = config["srr_ids"]
@@ -41,13 +41,14 @@ rule run_cellranger_count:
   params:
     sample = "{sample}",
     fastqs = FASTQ_DIR,
-    transcriptome = REFERENCE
+    transcriptome = REFERENCE,
+    cellranger_exe = "data/cellranger/cellranger-9.0.1/cellranger count"
   threads: 8
   output:
     output_file = "data/cellranger/{sample}/outs/filtered_feature_bc_matrix/barcodes.tsv.gz"
   shell:
     """
-    cellranger count --id="{params.sample}" \
+    {params.cellranger_exe} --id="{params.sample}" --create-bam true \
     --transcriptome="{params.transcriptome}" \
     --fastqs="{params.fastqs}" \
     --sample="{params.sample}" \
