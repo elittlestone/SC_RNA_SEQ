@@ -42,11 +42,10 @@ git push origin main
 **Adding necessary packages through pixi can be done as follows:**
 
 ```{bash Add Packages, eval = F, echo = T}
-pixi add snakemake sra-tools
+pixi add snakemake sra-tools scanpy anndata cellxgene
 ```
 
-**For the rest of the analysis, our commands can either be run via pixi by doing: *pixi run 'executable'* or by launching a subshell with *pixi shell* and running commands as normal.**
-
+**For the rest of the analysis, our commands can either be run via pixi by doing: *pixi run 'executable'* or by launching a subshell with *pixi s* and running commands as normal.**
 
 ## Downloading Raw Sequencing Data
 
@@ -82,6 +81,12 @@ We can also go to the SRA Web Page for this particular entry and find useful inf
 
 **Here is an in-depth explanation of the CellRanger software [What is CellRanger?](https://www.scdiscoveries.com/blog/knowledge/cellranger/#what-it-is)**
 
+  - Cell Type Identification: Researchers can classify and identify different cell types based on their unique gene expression profiles.
+  -Cell state analysis: By comparing gene expression patterns, researchers can identify different cellular states, such as quiescent, activated, or differentiated cells.
+  - Biomarker discovery: Cell Ranger can help identify genes specifically expressed in specific cell types or conditions, which can serve as potential biomarkers.
+  - Differential gene expression analysis: Researchers can identify differentially expressed genes between different conditions or cell types, providing insights into molecular differences.
+  - Cell Trajectory Analysis: By analyzing gene expression changes, researchers can infer cell developmental trajectories and transitions.
+
 ```{bash Download Transcriptome and Run CellRanger, eval = F, echo = T}
 snakemake -s download_ref_and_run_cellranger.smk --cores 1 -p
 ```
@@ -96,3 +101,25 @@ snakemake -s download_ref_and_run_cellranger.smk --cores 1 -p
 
 <iframe src="AL03_web_summary.html" width="100%" height="800px" style="border:none;"></iframe>
 
+
+## Post-processing with Scanpy 
+
+[Scanpy Tutorial](https://scanpy.readthedocs.io/en/stable/tutorials/basics/clustering.html)
+
+The first steps of analyzing our Cell Ranger output involve Quality Control (QC), which includes assessing cells with high mitochondrial gene counts. High mitochondrial RNA fraction often indicates stressed, dying, or damaged cells that were lysed prematurely before droplet encapsulation in the 10x Genomics workflow. These cells are commonly filtered out because their RNA profiles may be compromised and potentially contaminated with RNA from other lysed cells.
+
+
+```{bash Run Scanpy, eval = F, echo = T}
+
+```
+
+<iframe src="results/qc_figures/violin_AL02.png" width="100%" height="800px" style="border:none;"></iframe>
+
+
+<iframe src="results/qc_figures/scatter_AL02.png" width="100%" height="800px" style="border:none;"></iframe>
+
+<iframe src="results/qc_figures/violin_AL03.png" width="100%" height="800px" style="border:none;"></iframe>
+
+<iframe src="results/qc_figures/scatter_AL03.png" width="100%" height="800px" style="border:none;"></iframe>
+
+Based on the results of our QC steps, 

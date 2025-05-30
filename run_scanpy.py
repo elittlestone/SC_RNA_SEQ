@@ -15,6 +15,9 @@ def main():
     outfile = args.processed_h5
     sample_id = args.sample_id
 
+    adata = read_10x_file_into_adata(matrix_file, sample_id)
+    adata.write(outfile)
+
 def read_10x_file_into_adata(matrix_file, sample_id):
     adatas = {}
     sample_adata = sc.read_10x_h5(matrix_file)
@@ -24,7 +27,9 @@ def read_10x_file_into_adata(matrix_file, sample_id):
     adata = ad.concat(adatas, label = "sample")
     adata.obs_names_make_unique()
     print(adata.obs["sample"].value_counts())
-    adata
+
+    return adata
+
 
 if __name__ == "__main__":
     main()

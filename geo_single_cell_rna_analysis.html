@@ -90,6 +90,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   </ul></li>
   <li><a href="#cell-ranger-summary-al02" id="toc-cell-ranger-summary-al02" class="nav-link" data-scroll-target="#cell-ranger-summary-al02">📊 Cell Ranger Summary: AL02</a></li>
   <li><a href="#cell-ranger-summary-al03" id="toc-cell-ranger-summary-al03" class="nav-link" data-scroll-target="#cell-ranger-summary-al03">📊 Cell Ranger Summary: AL03</a></li>
+  <li><a href="#post-processing-with-scanpy" id="toc-post-processing-with-scanpy" class="nav-link" data-scroll-target="#post-processing-with-scanpy">Post-processing with Scanpy</a></li>
   </ul>
 </nav>
 </div>
@@ -149,10 +150,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pixi</span> add snakemake sra-tools</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pixi</span> add snakemake sra-tools scanpy anndata cellxgene</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<p><strong>For the rest of the analysis, our commands can either be run via pixi by doing: <em>pixi run ‘executable’</em> or by launching a subshell with <em>pixi shell</em> and running commands as normal.</strong></p>
+<p><strong>For the rest of the analysis, our commands can either be run via pixi by doing: <em>pixi run ‘executable’</em> or by launching a subshell with <em>pixi s</em> and running commands as normal.</strong></p>
 </section>
 <section id="downloading-raw-sequencing-data" class="level2">
 <h2 class="anchored" data-anchor-id="downloading-raw-sequencing-data">Downloading Raw Sequencing Data</h2>
@@ -182,6 +183,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h3 class="anchored" data-anchor-id="the-next-step-is-to-download-our-reference-human-transcriptome-as-well-as-the-cellranger-softwrae-tool-from-10x-genomics-so-we-can-align-our-raw-reads-and-quantify-them.">The next step is to download our reference human transcriptome as well as the cellranger softwrae tool from 10x genomics so we can align our raw reads and quantify them.</h3>
 <p><a href="https://www.10xgenomics.com/support/software/cell-ranger/downloads#download-links">Download CellRanger</a></p>
 <p><strong>Here is an in-depth explanation of the CellRanger software <a href="https://www.scdiscoveries.com/blog/knowledge/cellranger/#what-it-is">What is CellRanger?</a></strong></p>
+<ul>
+<li>Cell Type Identification: Researchers can classify and identify different cell types based on their unique gene expression profiles. -Cell state analysis: By comparing gene expression patterns, researchers can identify different cellular states, such as quiescent, activated, or differentiated cells.</li>
+<li>Biomarker discovery: Cell Ranger can help identify genes specifically expressed in specific cell types or conditions, which can serve as potential biomarkers.</li>
+<li>Differential gene expression analysis: Researchers can identify differentially expressed genes between different conditions or cell types, providing insights into molecular differences.</li>
+<li>Cell Trajectory Analysis: By analyzing gene expression changes, researchers can infer cell developmental trajectories and transitions.</li>
+</ul>
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
@@ -200,6 +207,26 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h2 class="anchored" data-anchor-id="cell-ranger-summary-al03">📊 Cell Ranger Summary: AL03</h2>
 <iframe src="AL03_web_summary.html" width="100%" height="800px" style="border:none;">
 </iframe>
+</section>
+<section id="post-processing-with-scanpy" class="level2">
+<h2 class="anchored" data-anchor-id="post-processing-with-scanpy">Post-processing with Scanpy</h2>
+<p><a href="https://scanpy.readthedocs.io/en/stable/tutorials/basics/clustering.html">Scanpy Tutorial</a></p>
+<p>The first steps of analyzing our Cell Ranger output involve Quality Control (QC), which includes assessing cells with high mitochondrial gene counts. High mitochondrial RNA fraction often indicates stressed, dying, or damaged cells that were lysed prematurely before droplet encapsulation in the 10x Genomics workflow. These cells are commonly filtered out because their RNA profiles may be compromised and potentially contaminated with RNA from other lysed cells.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<iframe src="results/qc_figures/violin_AL02.png" width="100%" height="800px" style="border:none;">
+</iframe>
+<iframe src="results/qc_figures/scatter_AL02.png" width="100%" height="800px" style="border:none;">
+</iframe>
+<iframe src="results/qc_figures/violin_AL03.png" width="100%" height="800px" style="border:none;">
+</iframe>
+<iframe src="results/qc_figures/scatter_AL03.png" width="100%" height="800px" style="border:none;">
+</iframe>
+<p>Based on the results of our QC steps,</p>
 </section>
 
 </main>
