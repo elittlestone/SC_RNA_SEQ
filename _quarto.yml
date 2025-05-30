@@ -8,7 +8,7 @@ website:
   navbar:
     left:
       - text: Home
-        href: https://elittlestone.github.io
+        href: https://elittlestone.github.io/
   page-footer: "2025 Ethan Littlestone"
 
 format:
