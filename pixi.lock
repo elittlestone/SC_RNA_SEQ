@@ -104,6 +104,7 @@ environments:
       - conda: https://conda.anaconda.org/bioconda/noarch/geofetch-0.12.7-pyh7e72e81_0.tar.bz2
       - conda: https://conda.anaconda.org/conda-forge/linux-64/giflib-5.2.2-hd590300_0.conda
       - conda: https://conda.anaconda.org/conda-forge/linux-64/git-2.49.0-pl5321hc2ff736_1.conda
+      - conda: https://conda.anaconda.org/conda-forge/linux-64/git-lfs-3.6.1-h59e48b9_0.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/gitdb-4.0.12-pyhd8ed1ab_0.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/gitpython-3.1.44-pyhff2d567_0.conda
       - conda: https://conda.anaconda.org/conda-forge/linux-64/gmp-6.3.0-hac33072_2.conda
@@ -449,6 +450,7 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/gettext-0.24.1-h3dcc1bd_0.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/gettext-tools-0.24.1-h493aca8_0.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/git-2.49.0-pl5321ha659579_1.conda
+      - conda: https://conda.anaconda.org/conda-forge/osx-arm64/git-lfs-3.6.1-h55e91fe_0.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/gitdb-4.0.12-pyhd8ed1ab_0.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/gitpython-3.1.44-pyhff2d567_0.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/gmp-6.3.0-h7bae524_2.conda
@@ -2426,6 +2428,20 @@ packages:
   license: GPL-2.0-or-later and LGPL-2.1-or-later
   size: 11974493
   timestamp: 1747243663594
+- conda: https://conda.anaconda.org/conda-forge/linux-64/git-lfs-3.6.1-h59e48b9_0.conda
+  sha256: 8d19c90ca60cc6506e4b71bf44c3f2bc2f0bcbd8cb4ae0330a08bbe3c3e4e771
+  md5: 11441555eb6ac9b1205220403a3a0d40
+  license: MIT
+  license_family: MIT
+  size: 4056843
+  timestamp: 1736896138998
+- conda: https://conda.anaconda.org/conda-forge/osx-arm64/git-lfs-3.6.1-h55e91fe_0.conda
+  sha256: 65d16e98a5e0de034d62865030f80d607e39da6df9cfc9d3038733dccb490c1a
+  md5: b51baec7ecb2285be693f87691a9c41d
+  license: MIT
+  license_family: MIT
+  size: 3828474
+  timestamp: 1736896261291
 - conda: https://conda.anaconda.org/conda-forge/noarch/gitdb-4.0.12-pyhd8ed1ab_0.conda
   sha256: dbbec21a369872c8ebe23cb9a3b9d63638479ee30face165aa0fccc96e93eec3
   md5: 7c14f3706e099f8fcd47af2d494616cc

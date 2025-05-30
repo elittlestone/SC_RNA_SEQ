@@ -106,11 +106,11 @@ snakemake -s download_ref_and_run_cellranger.smk --cores 1 -p
 
 [Scanpy Tutorial](https://scanpy.readthedocs.io/en/stable/tutorials/basics/clustering.html)
 
-The first steps of analyzing our Cell Ranger output involve Quality Control (QC), which includes assessing cells with high mitochondrial gene counts. High mitochondrial RNA fraction often indicates stressed, dying, or damaged cells that were lysed prematurely before droplet encapsulation in the 10x Genomics workflow. These cells are commonly filtered out because their RNA profiles may be compromised and potentially contaminated with RNA from other lysed cells.
+**The first steps of analyzing our Cell Ranger output involve Quality Control (QC), which includes assessing cells with high mitochondrial gene counts. High mitochondrial RNA fraction often indicates stressed, dying, or damaged cells that were lysed prematurely before droplet encapsulation in the 10x Genomics workflow. These cells are commonly filtered out because their RNA profiles may be compromised and potentially contaminated with RNA from other lysed cells.**
 
 
 ```{bash Run Scanpy, eval = F, echo = T}
-
+snakemake -s scanpy.smk --cores 1 -p
 ```
 
 <iframe src="results/qc_figures/violin_AL02.png" width="100%" height="800px" style="border:none;"></iframe>
@@ -122,4 +122,35 @@ The first steps of analyzing our Cell Ranger output involve Quality Control (QC)
 
 <iframe src="results/qc_figures/scatter_AL03.png" width="100%" height="800px" style="border:none;"></iframe>
 
-Based on the results of our QC steps, 
+
+### Doublet Detection
+
+**I filtered the data to only keep cells that have a minimum of 100 genes expressed as well as removed genes which are found in less than 3 cells. Next, we want to perform doublet detection. Doublets are droplets which have two or more cells.**
+
+
+
+
+
+
+### Normalization 
+
+**The next step is to normalize our gene expression values **
+
+
+### Feature Selection
+
+**Feature selection involves **
+
+### Dimensionality Reduction
+
+**Dimensionality reduction **
+
+### Nearest neighbor graph construction/visualization
+
+**Nearest-neighbor graphs are **
+
+
+### Clustering
+
+**Leiden graph-clustering **
+****
