@@ -1,0 +1,17 @@
+project:
+  type: website
+  output-dir: ../elittlestone.github.io/SC_RNA_SEQ_USF
+
+website:
+  title: "Single Cell RNA-seq Project"
+  site-url: https://elittlestone.github.io/SC_RNA_SEQ_USF/
+  navbar:
+    left:
+      - text: Home
+        href: https://elittlestone.github.io
+  page-footer: "2025 Ethan Littlestone"
+
+format:
+  html:
+    theme: cosmo
+    css: custom_theme.css

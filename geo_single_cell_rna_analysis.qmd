@@ -81,6 +81,14 @@ We can also go to the SRA Web Page for this particular entry and find useful inf
 
 **Here is an in-depth explanation of the CellRanger software [What is CellRanger?](https://www.scdiscoveries.com/blog/knowledge/cellranger/#what-it-is)**
 
+  - Read Alignment: The raw sequencing data, which consists of short reads, is aligned to a reference genome using a suitable alignment algorithm. This step assigns reads to their respective genomic locations.
+  - Barcode and UMI Processing: Each cell captured by the Chromium platform has a unique barcode and unique molecular identifier (UMI). It uses these barcodes and UMIs to find low-quality cells and identify reads originating from the same cell.
+  - Transcript Counting: The aligned reads are then used to count the number of times each unique molecular identifier (UMI) appears for each gene. That helps in quantifying the gene expression levels in each cell.
+  - Data Aggregation and Quality Control: The CellRanger pipeline aggregates the counts from all cells into a count matrix, representing each cell’s gene expression profile. Quality control steps are applied to filter out low-quality cells and genes.
+  - Normalization and Analysis: The CellRanger pipeline normalizes the count matrix to account for cell sequencing depth differences. Then, it applies differential gene expression analysis, dimensionality reduction (such as principal component analysis or t-SNE), and clustering methods to reveal patterns and relationships among cells.
+  - Visualization: Scientists typically visualize the results using various tools that help them interpret and present their findings effectively. These tools include the BioTuring BBrowserX and the 10x Genomics Loupe Browser.
+
+
   - Cell Type Identification: Researchers can classify and identify different cell types based on their unique gene expression profiles.
   -Cell state analysis: By comparing gene expression patterns, researchers can identify different cellular states, such as quiescent, activated, or differentiated cells.
   - Biomarker discovery: Cell Ranger can help identify genes specifically expressed in specific cell types or conditions, which can serve as potential biomarkers.
