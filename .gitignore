@@ -7,3 +7,4 @@
 .Rhistory
 .snakemake/
 data/
+results/*.h5ad
