@@ -1,0 +1,9 @@
+
+# pixi environments
+.pixi
+*.egg-info
+.Rproj.user
+.DS_Store
+.Rhistory
+.snakemake/
+data/
