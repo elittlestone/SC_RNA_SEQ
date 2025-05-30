@@ -51,9 +51,13 @@ pixi add snakemake sra-tools scanpy anndata cellxgene
 **Single-cell RNA seq analysis allows for :**
 
   - Cell Type Identification: Researchers can classify and identify different cell types based on their unique gene expression profiles.
-  -Cell state analysis: By comparing gene expression patterns, researchers can identify different cellular states, such as quiescent, activated, or differentiated cells.
+  
+  - Cell state analysis: By comparing gene expression patterns, researchers can identify different cellular states, such as quiescent, activated, or differentiated cells.
+  
   - Biomarker discovery: Cell Ranger can help identify genes specifically expressed in specific cell types or conditions, which can serve as potential biomarkers.
+  
   - Differential gene expression analysis: Researchers can identify differentially expressed genes between different conditions or cell types, providing insights into molecular differences.
+  
   - Cell Trajectory Analysis: By analyzing gene expression changes, researchers can infer cell developmental trajectories and transitions.
   
 ## Downloading Raw Sequencing Data
