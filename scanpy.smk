@@ -21,7 +21,7 @@ rule run_scanpy:
     """
     mkdir -p {params.results_dir}
 
-    python run_scanpy.py --feature_matrix_file {input.matrix_file} \
+    python import_10x_data.py --feature_matrix_file {input.matrix_file} \
     --sample_id {wildcards.sample} --processed_h5 {output.h5ad}
     """
 

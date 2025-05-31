@@ -38,6 +38,9 @@ def main():
         color="pct_counts_mt",
         save=f"_{args.sample_id}.png"
     )
+    
+    sc.pp.filter_cells(adata, min_genes = 100)
+    sc.pp.filter_genes(adata, min_cells = 3)
 
 if __name__ == "__main__":
     main()
