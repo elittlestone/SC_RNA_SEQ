@@ -148,7 +148,7 @@ snakemake -s scanpy.smk --cores 1 -p
 
 ### Doublet Detection
 
-Next, we want to perform doublet detection. Doublets are droplets which have two or more cells.**
+**Next, we want to perform doublet detection. Doublets are droplets which have two or more cells and can be detected via the scrublet method. From the scanpy documentation : "Scrublet predicts cell doublets using a nearest-neighbor classifier of observed transcriptomes and simulated doublets"**
 
 
 
