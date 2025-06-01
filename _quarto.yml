@@ -2,6 +2,12 @@ project:
   type: website
   output-dir: ../elittlestone.github.io/SC_RNA_SEQ_USF
 
+publish:
+  github:
+    repo: elittlestone/elittlestone.github.io
+    branch: main
+    dir: SC_RNA_SEQ_USF
+
 website:
   title: "Single Cell RNA-seq Project"
   site-url: https://elittlestone.github.io/SC_RNA_SEQ_USF/
@@ -15,3 +21,4 @@ format:
   html:
     theme: cosmo
     css: custom_theme.css
+
