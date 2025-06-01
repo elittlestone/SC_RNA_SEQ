@@ -1,12 +1,6 @@
 project:
   type: website
-  output-dir: ../elittlestone.github.io/SC_RNA_SEQ_USF
-
-publish:
-  github:
-    repo: elittlestone/elittlestone.github.io
-    branch: main
-    dir: SC_RNA_SEQ_USF
+  output-dir: docs   # <-- output goes to docs/
 
 website:
   title: "Single Cell RNA-seq Project"
