@@ -4,7 +4,7 @@ project:
 
 website:
   title: "Single Cell RNA-seq Project"
-  site-url: https://elittlestone.github.io/SC_RNA_SEQ_USF/
+  site-url: https://elittlestone.github.io/SC_RNA_SEQ/
   navbar:
     left:
       - text: Home
