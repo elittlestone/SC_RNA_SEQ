@@ -1,6 +1,6 @@
 project:
   type: website
-  output-dir: docs   # <-- output goes to docs/
+  output-dir: docs
 
 website:
   title: "Single Cell RNA-seq Project"
