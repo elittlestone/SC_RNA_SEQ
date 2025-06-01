@@ -286,12 +286,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="cell-ranger-summary-al02" class="level2">
 <h2 class="anchored" data-anchor-id="cell-ranger-summary-al02">📊 Cell Ranger Summary: AL02</h2>
-<iframe src="AL02_web_summary.html" width="100%" height="800px" style="border:none;">
+<iframe src="results/figures/AL02_web_summary.html" width="100%" height="800px" style="border:none;">
 </iframe>
 </section>
 <section id="cell-ranger-summary-al03" class="level2">
 <h2 class="anchored" data-anchor-id="cell-ranger-summary-al03">📊 Cell Ranger Summary: AL03</h2>
-<iframe src="AL03_web_summary.html" width="100%" height="800px" style="border:none;">
+<iframe src="results/figures/AL03_web_summary.html" width="100%" height="800px" style="border:none;">
 </iframe>
 <p><strong>In the 10x SC-RNA seq technology, each barcode corresponds to a droplet. Ideally, each droplet will contain one cell. However, it is also possible for two or more cells to end up in a droplet (doublet), or no cells (empty droplet). The knee-plots show how each barcode ranks in terms of how many total UMIs, which represent unique transcripts captured from each cell. Droplets with a sufficiently low UMI count are likely empty droplets, and Cellranger has a probabilistic model it uses to filter out these droplets and only keep ‘real cells’. Our knee-plots show steep dropoffs, meaning there is a clear distinction between real cells and empty droplets.</strong></p>
 <p><strong>The main output of Cellranger is a filtered gene-cell expression matrix; rows are genes, columns are cells, and values in the matrix represent the number of UMIs (transcript counts) for each gene in each cell. This count serves as a proxy for gene expression. This filtered .h5 matrix file can then be used for post-processing with software tools like Scanpy in python or Seurat in R. I will be using Scanpy.</strong></p>
