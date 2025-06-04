@@ -113,11 +113,11 @@ snakemake -s download_ref_and_run_cellranger.smk --cores 1 -p
 
 ## 📊 Cell Ranger Summary: AL02
 
-<iframe src="results/figures/AL02_web_summary.html" width="100%" height="800px" style="border:none;"></iframe>
+<iframe src="www/www/results/figures/AL02_web_summary.html" width="100%" height="800px" style="border:none;"></iframe>
 
 ## 📊 Cell Ranger Summary: AL03
 
-<iframe src="results/figures/AL03_web_summary.html" width="100%" height="800px" style="border:none;"></iframe>
+<iframe src="www/results/figures/AL03_web_summary.html" width="100%" height="800px" style="border:none;"></iframe>
 
 **In the 10x SC-RNA seq technology, each barcode corresponds to a droplet. Ideally, each droplet will contain one cell. However, it is also possible for two or more cells to end up in a droplet (doublet), or no cells (empty droplet). The knee-plots show how each barcode ranks in terms of how many total UMIs, which represent unique transcripts captured from each cell. Droplets with a sufficiently low UMI count are likely empty droplets, and Cellranger has a probabilistic model it uses to filter out these droplets and only keep 'real cells'. Our knee-plots show steep dropoffs, meaning there is a clear distinction between real cells and empty droplets.**
 
@@ -136,13 +136,13 @@ snakemake -s scanpy.smk --cores 1 -p
 ```
 
 
-<iframe src="results/figures/violin_AL02.png" width="100%" height="400px" style="border:none;"></iframe>
+<iframe src="www/results/figures/violin_AL02.png" width="100%" height="400px" style="border:none;"></iframe>
 
-<iframe src="results/figures/scatter_AL02.png" width="100%" height="400px" style="border:none;"></iframe>
+<iframe src="www/results/figures/scatter_AL02.png" width="100%" height="400px" style="border:none;"></iframe>
 
-<iframe src="results/figures/violin_AL03.png" width="100%" height="400px" style="border:none;"></iframe>
+<iframe src="www/results/figures/violin_AL03.png" width="100%" height="400px" style="border:none;"></iframe>
 
-<iframe src="results/figures/scatter_AL03.png" width="100%" height="400px" style="border:none;"></iframe>
+<iframe src="www/results/figures/scatter_AL03.png" width="100%" height="400px" style="border:none;"></iframe>
 
 **The violin plots show the number of genes expressed in each cell, the total number of UMIs in each cell, and the percentage of mitochondrial UMIs/transcripts. For both samples, we see the majority of cells have ~ 1500 genes expressed, somewhere in the several thousand UMI range, and have very small proportions of mitochondrial RNA. The scatter plots just combine these QC metrics into one plot. I filtered the data to only keep cells that have a minimum of 100 genes expressed as well as removed genes which are found in less than 3 cells. **
 
@@ -160,30 +160,58 @@ snakemake -s scanpy.smk --cores 1 -p
 
 **Feature selection involves selecting only the most informativ genes for downstream analysis. We choose the 2000 most variable genes by **
 
-<iframe src="results/figures/filter_genes_dispersion_AL03.png" width="100%" height="400px" style="border:none;"></iframe>
+<iframe src="www/results/figures/filter_genes_dispersion_AL03.png" width="100%" height="400px" style="border:none;"></iframe>
 
-<iframe src="results/figures/filter_genes_dispersion_AL02.png" width="100%" height="400px" style="border:none;"></iframe>
+<iframe src="www/results/figures/filter_genes_dispersion_AL02.png" width="100%" height="400px" style="border:none;"></iframe>
 
 ### Dimensionality Reduction
 
 **Dimensionality reduction **
 
 
-<iframe src="results/figures/pca_AL03.pdf" width="100%" height="400px" style="border:none;"></iframe>
+<iframe src="www/results/figures/pca_AL03.pdf" width="100%" height="400px" style="border:none;"></iframe>
 
-<iframe src="results/figures/pca_variance_ratio_AL03.pdf" width="100%" height="400px" style="border:none;"></iframe>
+<iframe src="www/results/figures/pca_variance_ratio_AL03.pdf" width="100%" height="400px" style="border:none;"></iframe>
 
-<iframe src="results/figures/pca_AL02.pdf" width="100%" height="400px" style="border:none;"></iframe>
+<iframe src="www/results/figures/pca_AL02.pdf" width="100%" height="400px" style="border:none;"></iframe>
 
-<iframe src="results/figures/pca_variance_ratio_AL02.pdf" width="100%" height="400px" style="border:none;"></iframe>
+<iframe src="www/results/figures/pca_variance_ratio_AL02.pdf" width="100%" height="400px" style="border:none;"></iframe>
 
 ### Nearest neighbor graph construction/visualization
 
 **Nearest-neighbor graphs are **
 
+<iframe src="www/results/figures/umap_neighbors_AL02.png" width="100%" height="400px" style="border:none;"></iframe>
+
+<iframe src="www/results/figures/umap_neighbors_AL03.png" width="100%" height="400px" style="border:none;"></iframe>
 
 ### Clustering
 
 **Leiden graph-clustering **
 
+<iframe src="www/results/figures/umap_leiden_AL02.png" width="100%" height="400px" style="border:none;"></iframe>
+
+<iframe src="www/results/figures/umap_leiden_AL03.png" width="100%" height="400px" style="border:none;"></iframe>
+
 **The leiden graph-clustering **
+
+
+### Re-assess QC and Cell-filtering 
+
+<iframe src="www/results/figures/umap_doublet_qc_AL02.png" width="100%" height="400px" style="border:none;"></iframe>
+
+<iframe src="www/results/figures/umap_doublet_qc_AL03.png" width="100%" height="400px" style="border:none;"></iframe>
+
+<iframe src="www/results/figures/umap_mt_counts_AL02.png" width="100%" height="400px" style="border:none;"></iframe>
+
+<iframe src="www/results/figures/umap_mt_counts_AL03.png" width="100%" height="400px" style="border:none;"></iframe>
+
+### Manual cell-type annotation
+
+<iframe src="www/results/figures/dotplot_0.02_AL02.png" width="100%" height="400px" style="border:none;"></iframe>
+
+<iframe src="www/results/figures/dotplot_0.02_AL03.png" width="100%" height="400px" style="border:none;"></iframe style="border:none;"></iframe>
+
+<iframe src="www/results/figures/dotplot_0.50_AL02.png" width="100%" height="400px" style="border:none;"></iframe
+
+<iframe src="www/results/figures/dotplot_0.50_AL03.png" width="100%" height="400px" style="border:none;"></iframe
