@@ -1,6 +1,7 @@
 import scrublet as scr
 import scanpy as sc
 import argparse
+import pandas as pd
 import os
 
 def main():
@@ -25,10 +26,7 @@ def main():
     nearest_neighbor(adata, sample_id)
     clustering(adata, sample_id)
     reassess_qc(adata, sample_id)
-    #save_annotation_data_obj(adata, sample_id)
-    cell_annotation(adata, sample_id)
-    marker_gene_set(adata, sample_id)
-    diff_exp_genes(adata, sample_id)
+    annotation_and_identify_markers(adata, sample_id)
 
 def filter_cells(adata, sample_id):
 
@@ -81,12 +79,13 @@ def feature_selection(adata, sample_id):
 def dimensionality_reduction(adata, sample_id):
     sc.tl.pca(adata)
     sc.pl.pca_variance_ratio(adata, n_pcs = 50, log = True, save = f"_{sample_id}")
-    sc.pl.pca(adata,
-              color = ["sample", "sample", "pct_counts_mt", "pct_counts_mt"],
-              dimensions = [(0, 1), (2, 3), (0, 1), (2, 3)],
-              ncols = 2,
-              size = 2, 
-              save = f"_{sample_id}")
+    # The below plot could be useful if we had multiple samples in the same anndata object
+    #sc.pl.pca(adata,
+    #          color = ["sample", "sample", "pct_counts_mt", "pct_counts_mt"],
+    #          dimensions = [(0, 1), (2, 3), (0, 1), (2, 3)],
+    #          ncols = 2,
+    #          size = 2, 
+    #          save = f"_{sample_id}")
     
 
 def nearest_neighbor(adata, sample_id):
@@ -119,17 +118,7 @@ def reassess_qc(adata, sample_id):
                save = f"_mt_counts_{sample_id}.pdf")
 
 
-def save_annotation_data_obj(adata, sample_id):
-    adata.X = adata.X.tocsc()
-
-    for col in adata.obs.columns:
-        if adata.obs[col].dtype.name == "object":
-            adata.obs[col] = adata.obs[col].astype("category")
-    print(adata.obs.dtypes)
-    adata.write(f"results/{sample_id}_post_processed.h5ad", compression = "gzip")
-
-
-def cell_annotation(adata, sample_id):
+def annotation_and_identify_markers(adata, sample_id):
     for res in [0.02, 0.5, 2.0]:
         sc.tl.leiden(adata,
                      key_added = f"leiden_res_{res:4.2f}", resolution = res, flavor = "igraph"
@@ -141,8 +130,16 @@ def cell_annotation(adata, sample_id):
             save = f"_resolutions_{sample_id}.pdf"
             )
 
-def marker_gene_set(adata, sample_id):
-    marker_genes_all = {"CD14+ Mono" : ["FCN1", "CD14"], 
+
+    # Run DE analysis
+    sc.tl.rank_genes_groups(adata,
+                            groupby = "leiden_res_0.50",
+                            method = "wilcoxon")
+    
+    # Dotplot and manual annotation
+
+    marker_genes_all = {
+    "CD14+ Mono" : ["FCN1", "CD14"], 
     "CD16+ Mono": ["TCF7L2", "FCGR3A", "LYN"],
     # Note: DMXL2 should be negative
     "cDC2": ["CST3", "COTL1", "LYZ", "DMXL2", "CLEC10A", "FCER1A"],
@@ -171,29 +168,36 @@ def marker_gene_set(adata, sample_id):
                   standard_scale = "var",
                   save = f"0.02_{sample_id}.png")
 
-    adata.obs["cell_type_lvl1"] = adata.obs["leiden_res_0.02"].map(
-            {
-                "0" : "Lymphocytes",
-                "1" : "Monocytes",
-                "2" : "Erythroid",
-                "3" : "B Cells",
-                }
-            )
     sc.pl.dotplot(adata, marker_genes_in_anndata, groupby = "leiden_res_0.50",
                   standard_scale = "var",
                   save = f"0.50_{sample_id}.png")
 
-def diff_exp_genes(adata, sample_id):
-    sc.tl.rank_genes_groups(adata,
-                            groupby = "leiden_res_0.50",
-                            method = "wilcoxon")
+    sc.tl.marker_gene_overlap(adata, marker_genes_in_anndata, key = "rank_genes_groups")
+
+
+    for category, genes in marker_genes_in_anndata.items():
+        sc.tl.score_genes(adata, gene_list = genes, score_name = category)
+
+
+    sc.pl.umap(adata, color = list(marker_genes_in_anndata.keys()),
+               save = f"_annotations_{sample_id}.pdf")
+
 
     sc.pl.rank_genes_groups_dotplot(adata,
                                     groupby = "leiden_res_0.50",
                                     standard_scale = "var", n_genes = 5,
                                     save = f"ranked_genes_{sample_id}.png")
 
+    
+    # Get top DE genes per cluster
+    top_diff_exp_genes = pd.concat([
+        sc.get.rank_genes_groups_df(adata, group = cl)
+        .head(10)
+        .assign(cluster = cl)
+        for cl in adata.obs["leiden_res_0.50"].cat.categories
+        ])
 
+    top_diff_exp_genes.to_html(f"results/figures/top10_degs_all_clusters_{sample_id}.html", index = False)
 
 if __name__ == "__main__":
     main()

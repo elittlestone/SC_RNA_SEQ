@@ -9,17 +9,16 @@ rule all:
     expand("results/figures/scatter_{sample}.png", sample = SAMPLES),
     expand("results/figures/filter_genes_dispersion_{sample}.png", sample = SAMPLES),
     expand("results/figures/pca_variance_ratio_{sample}.pdf", sample = SAMPLES),
-    expand("results/figures/pca_{sample}.pdf", sample = SAMPLES),
     expand("results/figures/umap_neighbors_{sample}.png", sample = SAMPLES),
     expand("results/figures/umap_leiden_{sample}.pdf", sample = SAMPLES),
     expand("results/figures/umap_doublet_qc_{sample}.pdf", sample = SAMPLES),
     expand("results/figures/umap_mt_counts_{sample}.pdf", sample = SAMPLES),
-    #expand("results/{sample}_post_processed.h5ad", sample = SAMPLES),
     expand("results/figures/umap_resolutions_{sample}.pdf", sample = SAMPLES),
+    expand("results/figures/umap_annotations_{sample}.pdf", sample = SAMPLES),
     expand("results/figures/dotplot_0.02_{sample}.png", sample = SAMPLES),
     expand("results/figures/dotplot_0.50_{sample}.png", sample = SAMPLES),
     expand("results/figures/dotplot_ranked_genes_{sample}.png", sample = SAMPLES),
-
+    expand("results/figures/top10_degs_all_clusters_{sample}.html", sample = SAMPLES),
 rule run_scanpy:
   input:
     matrix_file = "{sample}_filtered_feature_bc_matrix.h5",
@@ -46,17 +45,16 @@ rule run_qc:
     scatter_plot = "results/figures/scatter_{sample}.png",
     highly_variable_genes = "results/figures/filter_genes_dispersion_{sample}.png",
     pca_variance_ratio = "results/figures/pca_variance_ratio_{sample}.pdf",
-    pca = "results/figures/pca_{sample}.pdf",
     neighbors = "results/figures/umap_neighbors_{sample}.png",
     leiden = "results/figures/umap_leiden_{sample}.pdf",
     reassess_qc_doublets = "results/figures/umap_doublet_qc_{sample}.pdf",
     reassess_qc_mito = "results/figures/umap_mt_counts_{sample}.pdf",
-    #post_processed_adata = "results/{sample}_post_processed.h5ad",
     umap_leiden_resolutions = "results/figures/umap_resolutions_{sample}.pdf",
+    umap_annotations = "results/figures/umap_annotations_{sample}.pdf",
     dotplot_02 = "results/figures/dotplot_0.02_{sample}.png",
     dotplot_05 = "results/figures/dotplot_0.50_{sample}.png",
     dotplot_ranked_genes = "results/figures/dotplot_ranked_genes_{sample}.png",
-
+    top10_degs = "results/figures/top10_degs_all_clusters_{sample}.html"
   shell:
     """
     python qc_scanpy.py --input_h5ad {input.h5ad} --sample_id {params.sample}
