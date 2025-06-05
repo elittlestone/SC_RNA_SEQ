@@ -89,7 +89,7 @@ def dimensionality_reduction(adata, sample_id):
     
 
 def nearest_neighbor(adata, sample_id):
-    sc.pp.neighbors(adata)
+    sc.pp.neighbors(adata, n_pcs = 10)
     sc.tl.umap(adata)
     sc.pl.umap(
             adata,
