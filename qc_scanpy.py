@@ -161,7 +161,7 @@ def annotation_and_identify_markers(adata, sample_id):
     "pDC": ["GZMB", "IL3RA", "COBLL1", "TCF4"]}
 
     marker_genes_in_anndata = {cell_type: [gene for gene in genes if gene in adata.var_names]
-                               for cell, gene in marker_genes_all.items()}
+                               for cell_type, genes in marker_genes_all.items()}
     
     #sc.pl.dotplot(adata, marker_genes_in_anndata, 
     #              groupby="leiden_res_0.02", 

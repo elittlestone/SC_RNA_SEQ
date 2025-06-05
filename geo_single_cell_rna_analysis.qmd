@@ -245,6 +245,22 @@ snakemake -s scanpy.smk --cores 8 -p
 
 ### 3.8 Manual cell-type annotation
 
+**Before we begin to annotate our clusters, we have to decide on the resolution of the leiden algorithm. The higher the resolution, the more distinct clusters we get, and vice versa. This means that if we pick too low of a resolution, we can only look at large/general cell-types (B-cells, T-cells, etc), versus if we pick too large a resolution, we risk segregating identical cell-types into different clusters. I plotted the different resolutions below and decided to choose 0.5**
+
+**AL02 UMAP Leiden Resolutions**
+<iframe src="results/figures/umap_resolutions_AL02.pdf" width="100%" height="400px" style="border:none;"></iframe>
+
+**AL03 UMAP Leiden Resolutions**
+
+<iframe src="results/figures/umap_resolutions_AL03.pdf" width="100%" height="400px" style="border:none;"></iframe>
+
+
+
+
+
+
+<iframe src="results/figures/umap_annotations_AL02.pdf" width="100%" height="400px" style="border:none;"></iframe>
+
 <iframe src="results/figures/umap_annotations_AL02.pdf" width="100%" height="400px" style="border:none;"></iframe>
 
 <iframe src="results/figures/umap_annotations_AL03.pdf" width="100%" height="400px" style="border:none;"></iframe>
