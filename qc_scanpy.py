@@ -1,3 +1,4 @@
+import scrublet as scr
 import scanpy as sc
 import argparse
 import os
@@ -16,13 +17,17 @@ def main():
     adata = sc.read_h5ad(args.input_h5ad)
     sample_id = args.sample_id
     # Post-processing steps go here
-    adata = filter_cells(adata, sample_id)
-    adata = doublet_detection(adata)
-    adata = normalization(adata)
-    adata = feature_selection(adata, sample_id)
-    adata = dimensionality_reduction(adata, sample_id)
-
-
+    filter_cells(adata, sample_id)
+    doublet_detection(adata)
+    normalization(adata)
+    feature_selection(adata, sample_id)
+    dimensionality_reduction(adata, sample_id)
+    nearest_neighbor(adata, sample_id)
+    clustering(adata, sample_id)
+    reassess_qc(adata, sample_id)
+    #save_annotation_data_obj(adata, sample_id)
+    cell_annotation(adata, sample_id)
+    marker_gene_set(adata, sample_id)
 
 def filter_cells(adata, sample_id):
 
@@ -53,22 +58,24 @@ def filter_cells(adata, sample_id):
     sc.pp.filter_cells(adata, min_genes = 100)
     sc.pp.filter_genes(adata, min_cells = 3)
 
-    return adata
+    
 
 def doublet_detection(adata):
-    sc.pp.scrublet(adata, batch_key="sample")
-    return adata 
+    scrub = scr.Scrublet(adata.X)
+    doublet_scores, predicted_doublets = scrub.scrub_doublets()
+    adata.obs["doublet_scores"] = doublet_scores
+    adata.obs["predicted_doublets"] = predicted_doublets
 
 def normalization(adata):
     adata.layers["counts"] = adata.X.copy()
     sc.pp.normalize_total(adata)
     sc.pp.log1p(adata)
-    return adata
+    
 
 def feature_selection(adata, sample_id):
     sc.pp.highly_variable_genes(adata, n_top_genes = 2000, batch_key = "sample")
     sc.pl.highly_variable_genes(adata, save = f"_{sample_id}.png")
-    return adata
+    
 
 def dimensionality_reduction(adata, sample_id):
     sc.tl.pca(adata)
@@ -79,7 +86,104 @@ def dimensionality_reduction(adata, sample_id):
               ncols = 2,
               size = 2, 
               save = f"_{sample_id}")
-    return adata
+    
+
+def nearest_neighbor(adata, sample_id):
+    sc.pp.neighbors(adata)
+    sc.tl.umap(adata)
+    sc.pl.umap(
+            adata,
+            color="sample",
+            size=2,
+            save=f"_neighbors_{sample_id}.png"
+            )
+    
+
+def clustering(adata, sample_id):
+    sc.tl.leiden(adata, flavor = "igraph", n_iterations = 2)
+    sc.pl.umap(adata, color = ["leiden"], save = f"_leiden_{sample_id}")
+
+
+def reassess_qc(adata, sample_id):
+    sc.pl.umap(
+            adata,
+            color = ["leiden", "predicted_doublets", "doublet_scores"],
+            wspace = 0.5, size = 3,
+            save = f"_doublet_qc_{sample_id}.pdf"
+            )
+
+    sc.pl.umap(adata,
+               color = ["leiden", "log1p_total_counts", "pct_counts_mt", "log1p_n_genes_by_counts"],
+               wspace = 0.5, ncols = 2,
+               save = f"_mt_counts_{sample_id}.pdf")
+
+
+def save_annotation_data_obj(adata, sample_id):
+    adata.X = adata.X.tocsc()
+
+    for col in adata.obs.columns:
+        if adata.obs[col].dtype.name == "object":
+            adata.obs[col] = adata.obs[col].astype("category")
+    print(adata.obs.dtypes)
+    adata.write(f"results/{sample_id}_post_processed.h5ad", compression = "gzip")
+
+
+def cell_annotation(adata, sample_id):
+    for res in [0.02, 0.5, 2.0]:
+        sc.tl.leiden(adata,
+                     key_added = f"leiden_res_{res:4.2f}", resolution = res, flavor = "igraph"
+                     )
+    sc.pl.umap(
+            adata, 
+            color = ["leiden_res_0.02", "leiden_res_0.50", "leiden_res_2.00"],
+            legend_loc = "on data",
+            save = f"_resolutions_{sample_id}.pdf"
+            )
+
+def marker_gene_set(adata, sample_id):
+    marker_genes_all = {"CD14+ Mono" : ["FCN1", "CD14"], 
+    "CD16+ Mono": ["TCF7L2", "FCGR3A", "LYN"],
+    # Note: DMXL2 should be negative
+    "cDC2": ["CST3", "COTL1", "LYZ", "DMXL2", "CLEC10A", "FCER1A"],
+    "Erythroblast": ["MKI67", "HBA1", "HBB"],
+    # Note HBM and GYPA are negative markers
+    "Proerythroblast": ["CDK6", "SYNGR1", "HBM", "GYPA"],
+    "NK": ["GNLY", "NKG7", "CD247", "FCER1G", "TYROBP", "KLRG1", "FCGR3A"],
+    "ILC": ["ID2", "PLCG2", "GNLY", "SYNE1"],
+    "Naive CD20+ B": ["MS4A1", "IL4R", "IGHD", "FCRL1", "IGHM"],
+    # Note IGHD and IGHM are negative markers
+    "B cells" : ["MS4A1", "ITGB1", "COL4A4", "PRDM1", "IRF4", "PAX5", "BCL11A", "BLK", "IGHD", "IGHM"],
+    "Plasma cells": ["MZB1", "HSP90B1", "FNDC3B", "PRDM1", "IGKC", "JCHAIN"],
+    # Note PAX5 is a negative marker
+    "Plasmablast": ["XBP1", "PRDM1", "PAX5"],
+    "CD4+ T": ["CD4", "IL7R", "TRBC2"],
+    "CD8+ T": ["CD8A", "CD8B", "GZMK", "GZMA", "CCL5", "GZMB", "GZMH", "GZMA"],
+    "T naive": ["LEF1", "CCR7", "TCF7"],
+    "pDC": ["GZMB", "IL3RA", "COBLL1", "TCF4"]}
+
+    marker_genes_in_anndata = {cell_type: [gene for gene in genes if gene in adata.var_names]}
+    sc.pl.dotplot(adata, marker_genes, 
+                  groupby="leiden_res_0.02", 
+                  standard_scale = "var",
+                  save = f"_0.02_{sample_id}.pdf")
+
+    adata.obs["cell_type_lvl1"] = adata.obs["leiden_res_0.02"].map(
+            {
+                "0" : "Lymphocytes",
+                "1" : "Monocytes",
+                "2" : "Erythroid",
+                "3" : "B Cells",
+                }
+            )
+    sc.pl.dotplot(adata, marker_genes, groupby = "leiden_res_0.50",
+                  standard_scale = "var",
+                  save = f"_0.50_{sample_id}.pdf")
+
+def diff_exp_genes(adata, sample_id):
+    pass
+
+
+
 if __name__ == "__main__":
     main()
 

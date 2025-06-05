@@ -10,7 +10,7 @@ author: Ethan Littlestone
 knitr: true
 ---
 
-## Environment Setup/Package Installation
+## 1. Environment Setup/Package Installation
 
 **I will be using Quarto, a super set of R Markdown for this Single-Cell RNA-seq Analysis. Quarto allows for the creation of detailed scientific reports (along with other formats like interactive web pages, dashboards, etc.) to help encourage collaboration and shareability of bioinformatics workflows.**
 
@@ -42,12 +42,16 @@ git push origin main
 **Adding necessary packages through pixi can be done as follows:**
 
 ```{bash Add Packages, eval = F, echo = T}
-pixi add snakemake sra-tools scanpy anndata cellxgene
+pixi add python snakemake sra-tools scanpy anndata cellxgene scikit-image \
+pandas quarto anndata 
 ```
 
 **For the rest of the analysis, our commands can either be run via pixi by doing: *pixi run 'executable'* or by launching a subshell with *pixi s* and running commands as normal.**
 
-## Single-Cell RNA-seq Workflow
+# 2. Single-Cell RNA-Seq Workflow
+
+**I used the Single-Cell best practices guide for help on the general pipeline for SC-RNA Seq analysis**
+[Single-Cell Best Practices](https://www.sc-best-practices.org/introduction/scrna_seq.html)
 
 **As the 10x Genomics Cellranger Tutorial explains, Single-cell RNA seq analysis allows for :**
 
@@ -64,35 +68,30 @@ pixi add snakemake sra-tools scanpy anndata cellxgene
   - Cell Trajectory Analysis: By analyzing gene expression changes, researchers can infer cell developmental trajectories and transitions.
 
 
-## Downloading Raw Sequencing Data
+## 2.1 Downloading Raw Sequencing Data
 
-**Sratools is a suite of command-line tools that allows for the programmatic downloading of GEO data. This avoids having to download through the web and promotes reproducibility as well as error handling. Sratools comes with multiple programs, here we use the *fasterq-dump* command. Running fasterq-dump -h' after downloading sratools through pixi gives helpful instructions on how to use the tool as well as the variety of different flags/parameters that can be passed to this program. We use fasterq-dump in a snakemake script to download our rna-seq reads and convert them to fastq format (fasterq-dump handles the download and file format conversion for us).**
+**Sratools is a suite of command-line tools that allows for the programmatic downloading of GEO data. This avoids having to download through the web and promotes reproducibility as well as error handling. Sratools comes with multiple programs, here we use the *fasterq-dump* command. Running fasterq-dump -h' after downloading sratools through pixi gives helpful instructions on how to use the tool as well as the variety of different flags/parameters that can be passed to this program. I used fasterq-dump in a snakemake script to download our rna-seq reads and convert them to fastq format (fasterq-dump handles the download and file format conversion for us).**
 
 
 **I have also created a configuration file where we can store hard-coded values which can then be referenced via our snakefile. This makes the process highly resistant to errors consistent with hard-coding file names. From the email that Dr. Zhang sent me that brings us to a GEO page, I then found the SRR accession ID. Providing this SRR to the *fasterq-dump* program will then download the appropriate raw sequencing data.**
 
 [Sratools](https://github.com/ncbi/sra-tools)
-[Fastq-dump](https://rnnh.github.io/bioinfo-notebook/docs/fastq-dump.html)
+[Fasterq-dump](https://github.com/ncbi/sra-tools/wiki/HowTo:-fasterq-dump)
 
-
-```{bash Snakefile for Downloading SRA files, eval = F, echo = T}
-snakefile="download_sra_files.smk"
-cat $snakefile
-```
 
 ```{bash Download SRA files with snakemake, eval = F}
 snakemake -s download_sra_files.smk --cores 8 -p 
 ```
 
-**We can also go to the SRA Web Page for this particular entry and find useful information about the sequencing experiment and runs. Again, we can get this meta data programmatically as well using *SRATools***
+**We can also go to the SRA Web Page for these samples and find useful information about the sequencing experiment and runs. Again, we can get this meta data programmatically as well using *SRATools***
 
 [Sequence Read Archive Web Page](https://trace.ncbi.nlm.nih.gov/Traces/?view=run_browser&page_size=10&acc=SRR30255722&display=metadata)
 
-## Read Alignment and Transcript Quantification 
+## 2.2 Read Alignment and Transcript Quantification 
 
-**Reads 1 and 2 are technical reads, while read 3 contains our actual transcript (Read 1 is the index for demultiplexing, read2 is the Unique Molecular Identifier or UMI + barcode).**
+**In our 10x SC-RNA seq raw sequencing data, Reads 1 and 2 are technical reads, while read 3 contains our actual transcript (Read 1 is the index for demultiplexing, read2 is the Unique Molecular Identifier or UMI + cell barcode).**
 
-### The next step is to download our reference human transcriptome as well as the cellranger software tool from 10x genomics so we can align our raw reads and quantify them. 
+**The next step is to download our reference human transcriptome as well as the Cellranger software tool from 10x genomics so we can align our raw reads and quantify them.**
 
 [Download CellRanger](https://www.10xgenomics.com/support/software/cell-ranger/downloads#download-links)
 
@@ -106,84 +105,156 @@ snakemake -s download_sra_files.smk --cores 8 -p
 
 
 ```{bash Download Transcriptome and Run CellRanger, eval = F, echo = T}
-snakemake -s download_ref_and_run_cellranger.smk --cores 1 -p
+snakemake -s download_ref_and_run_cellranger.smk --cores 8 -p
 ```
 
-**Cellranger is able to map our reads to the transcriptome and perform transcript quantification. The tool outputs an in-depth summary html file with detailed summary statistics.**
 
-## 📊 Cell Ranger Summary: AL02
+## 2.3 Cellranger Count Output 
+
+**Cellranger is able to map our reads to the transcriptome and perform transcript quantification. The tool outputs an in-depth summary html file with detailed summary statistics. I have embedded an interactive html that can be explored for each sample in order to explore the outputted results from Cellranger count. As we can see from these summary statistics, we have > 90% of reads mapping to our transcriptome, indicating high quality reads and a successful library prep. The mean reads per cell is not directly comparable between samples due to the different number of cells in each sample. We can also see the median number of genes expressed per cell in each sample.**
+
+
+### 📊 Cell Ranger Summary: AL02
 
 <iframe src="results/figures/AL02_web_summary.html" width="100%" height="800px" style="border:none;"></iframe>
 
-## 📊 Cell Ranger Summary: AL03
+### 📊 Cell Ranger Summary: AL03
 
 <iframe src="results/figures/AL03_web_summary.html" width="100%" height="800px" style="border:none;"></iframe>
 
-**In the 10x SC-RNA seq technology, each barcode corresponds to a droplet. Ideally, each droplet will contain one cell. However, it is also possible for two or more cells to end up in a droplet (doublet), or no cells (empty droplet). The knee-plots show how each barcode ranks in terms of how many total UMIs, which represent unique transcripts captured from each cell. Droplets with a sufficiently low UMI count are likely empty droplets, and Cellranger has a probabilistic model it uses to filter out these droplets and only keep 'real cells'. Our knee-plots show steep dropoffs, meaning there is a clear distinction between real cells and empty droplets.**
+**In the 10x SC-RNA seq technology, each barcode corresponds to a droplet. Ideally, each droplet will contain one cell. However, it's possible for two or more cells to end up in a droplet (doublet), or no cells (empty droplet). The knee-plots show how each barcode ranks in terms of total UMIs, which represent unique transcripts captured from each cell. Droplets with a sufficiently low UMI count are likely empty droplets, and Cellranger has a probabilistic model it uses to filter out these droplets and only keep 'real cells'. Our knee-plots show steep dropoffs, meaning there is a clear distinction between real cells and empty droplets.**
 
-**The main output of Cellranger is a filtered gene-cell expression matrix; rows are genes, columns are cells, and values in the matrix represent the number of UMIs (transcript counts) for each gene in each cell. This count serves as a proxy for gene expression. This filtered .h5 matrix file can then be used for post-processing with software tools like Scanpy in python or Seurat in R. I will be using Scanpy.**
+**Instead of just counting the total number of transcripts that map to a particular gene and considering that the expression level, UMIs are crucial in order to account for PCR bias. During library prep, transcripts are amplified before sequencing. This amplification can be biased depending on several factors like the GC content of the transcript or transcript length. The UMIs are short oligo-nucleotides that are added to the transcripts prior to amplification, capturing the total UNIQUE transcripts per gene.**
+
+**The main output of Cellranger is a filtered gene-cell expression matrix; rows are genes, columns are cells, and values in the matrix represent the number of UMIs (transcript counts) for each gene in each cell. This count serves as a proxy for gene expression. This filtered .h5 matrix file can then be used for post-processing with software tools like Scanpy in python or Seurat in R. Cellranger count also performs its own post-processing steps including clustering and differential gene expression analysis, however I will perform my own with the python Single Cell Analysis package *Scanpy*.**
 
 
-## Post-processing with Scanpy 
+## 3 Post-processing with Scanpy 
 
 [Scanpy Tutorial](https://scanpy.readthedocs.io/en/stable/tutorials/basics/clustering.html)
+
+### 3.1 Quality Control
+
+### 3.1.1 Analyze Mito Counts and Select Informative Genes/Cells
 
 **The first steps of analyzing our Cell Ranger output involve Quality Control (QC), which includes assessing cells with high mitochondrial gene counts. High mitochondrial RNA fraction often indicates stressed, dying, or damaged cells that were lysed prematurely before droplet encapsulation in the 10x Genomics workflow. These cells are commonly filtered out because their RNA profiles may be compromised and potentially contaminated with RNA from other lysed cells.**
 
 
 ```{bash Run Scanpy, eval = F, echo = T}
-snakemake -s scanpy.smk --cores 1 -p
+snakemake -s scanpy.smk --cores 8 -p
 ```
 
+**Violin plot AL02**
 
 <iframe src="results/figures/violin_AL02.png" width="100%" height="400px" style="border:none;"></iframe>
 
+
+**Scatter plot AL02**
+
 <iframe src="results/figures/scatter_AL02.png" width="100%" height="400px" style="border:none;"></iframe>
 
+
+**Violin plot AL03**
+
 <iframe src="results/figures/violin_AL03.png" width="100%" height="400px" style="border:none;"></iframe>
+
+
+**Scatter plot AL03**
 
 <iframe src="results/figures/scatter_AL03.png" width="100%" height="400px" style="border:none;"></iframe>
 
 **The violin plots show the number of genes expressed in each cell, the total number of UMIs in each cell, and the percentage of mitochondrial UMIs/transcripts. For both samples, we see the majority of cells have ~ 1500 genes expressed, somewhere in the several thousand UMI range, and have very small proportions of mitochondrial RNA. The scatter plots just combine these QC metrics into one plot. I filtered the data to only keep cells that have a minimum of 100 genes expressed as well as removed genes which are found in less than 3 cells. **
 
-### Doublet Detection
+#### 3.1.2 Doublet Detection
 
-**Next, we want to perform doublet detection. Doublets are droplets which have two or more cells and can be detected via the scrublet method. From the scanpy documentation : "Scrublet predicts cell doublets using a nearest-neighbor classifier of observed transcriptomes and simulated doublets"**
-
-
-### Normalization 
-
-**The next step is to normalize our gene expression values **
+**Next, we want to perform doublet detection. Doublets are droplets which have two or more cells and can be detected via Scanpy's .scrublet method/function. From the scanpy documentation : "Scrublet predicts cell doublets using a nearest-neighbor classifier of observed transcriptomes and simulated doublets". Doublet identification and removal is a CRITICAL step in post-processing. If we treat a droplet as representing a single cell when it actually represents the transcriptomic profile of multiple cells, this can dramatically skew our clustering/cell-type annotation downstream.**
 
 
-### Feature Selection
+### 3.2 Normalization 
 
-**Feature selection involves selecting only the most informativ genes for downstream analysis. We choose the 2000 most variable genes by **
+**The next step is to normalize our gene expression values across cells. Differences in transcript counts between cells could be the result of a number of different technical reasons, including sequencing depth and capture efficiency, rather than reflecting true differences in gene expression levels between the cells. Additionally, some genes might be extremely highly expressed, while other genes have normal to lower level of expression, which can skew downstream steps like clustering. I use scanpy's .normalize_total method to make transcript count comparisons between cells accurate and also perform log1p transformation to lessen the impact of very highly or lowly expressed genes.**
 
-<iframe src="results/figures/filter_genes_dispersion_AL03.png" width="100%" height="400px" style="border:none;"></iframe>
+
+### 3.3. Feature Selection
+
+**Feature selection involves selecting only the most informative genes for downstream analysis. If our main goal is distinguishing cell-types, the majority of genes are uninformative for this process (ex. housekeeping genes that are expressed at relatively same levels across different cell types) and additionally increase computational complexity required for steps like clustering/annotation. We choose the 2000 most variable genes by using scanpy's .highly_variable_genes() function. The figures below are visualizations of each gene's variation across cells.**
+
+**Variable genes AL02**
 
 <iframe src="results/figures/filter_genes_dispersion_AL02.png" width="100%" height="400px" style="border:none;"></iframe>
 
-### Dimensionality Reduction
+**Variable genes AL03**
 
-**Dimensionality reduction **
+<iframe src="results/figures/filter_genes_dispersion_AL03.png" width="100%" height="400px" style="border:none;"></iframe>
 
+### 3.4 Dimensionality Reduction
 
-<iframe src="results/figures/pca_AL03.pdf" width="100%" height="400px" style="border:none;"></iframe>
+**Dimensionality reduction involves taking our selected highly-variable genes, and performing some computational steps like principal component analysis (PCA) in order to essentially collapse these genes into a smaller subset of explainers or 'dimensions/axes' that account for the variation we see in expression levels of genes between cells. This reduces the computational complexity even further for the downstream step of clustering. Scanpy's function .pca computes this for us.**
 
-<iframe src="results/figures/pca_variance_ratio_AL03.pdf" width="100%" height="400px" style="border:none;"></iframe>
-
-<iframe src="results/figures/pca_AL02.pdf" width="100%" height="400px" style="border:none;"></iframe>
+**PCA plot AL02**
 
 <iframe src="results/figures/pca_variance_ratio_AL02.pdf" width="100%" height="400px" style="border:none;"></iframe>
 
-### Nearest neighbor graph construction/visualization
+**PCA plot AL03**
 
-**Nearest-neighbor graphs are **
+<iframe src="results/figures/pca_variance_ratio_AL03.pdf" width="100%" height="400px" style="border:none;"></iframe>
 
 
-### Clustering
+### 3.5 Nearest neighbor graph construction/visualization
 
-**Leiden graph-clustering **
+**Now that we have our PCA representation of the cell x gene data matrix, we can compute the neighborhood graph of cells with scanpy's .neighbors method. This neighborhood graph essentially encodes the cell to cell similarities. After that, we embed this higher-dimensional graph into 2D by using Uniform Manifold Approximate and Projection or UMAP; .umap() in scanpy. **
 
-**The leiden graph-clustering **
+<iframe src="results/figures/umap_neighbors_AL02.png" width="100%" height="400px" style="border:none;"></iframe>
+
+<iframe src="results/figures/umap_neighbors_AL03.png" width="100%" height="400px" style="border:none;"></iframe>
+
+### 3.6 Clustering
+
+**Once we have computed the nearest-neighbor graphs, we apply the leiden clustering algorithm. As the scanpy tutorial explains, the leiden clustering is applied directly to the neigbhorhood graph of cells and assigns each cell to a cluster.**
+
+**Leiden Clustering UMAP AL02**
+
+<iframe src="results/figures/umap_leiden_AL02.pdf" width="100%" height="400px" style="border:none;"></iframe>
+
+**Leiden Clustering UMAP AL03**
+
+<iframe src="results/figures/umap_leiden_AL03.pdf" width="100%" height="400px" style="border:none;"></iframe>
+
+
+### 3.7 Re-assess QC and Cell-filtering 
+
+**In order to **
+
+<iframe src="results/figures/umap_doublet_qc_AL02.pdf" width="100%" height="400px" style="border:none;"></iframe>
+
+<iframe src="results/figures/umap_mt_counts_AL02.pdf" width="100%" height="400px" style="border:none;"></iframe>
+
+<iframe src="results/figures/umap_doublet_qc_AL03.pdf" width="100%" height="400px" style="border:none;"></iframe>
+
+<iframe src="results/figures/umap_mt_counts_AL03.pdf" width="100%" height="400px" style="border:none;"></iframe>
+
+### 3.8 Manual cell-type annotation
+
+<iframe src="results/figures/umap_annotations_AL02.pdf" width="100%" height="400px" style="border:none;"></iframe>
+
+<iframe src="results/figures/umap_annotations_AL03.pdf" width="100%" height="400px" style="border:none;"></iframe>
+
+<iframe src="results/figures/dotplot_0.02_AL02.png" width="100%" height="400px" style="border:none;"></iframe>
+
+<iframe src="results/figures/dotplot_0.02_AL03.png" width="100%" height="400px" style="border:none;"></iframe style="border:none;"></iframe>
+
+<iframe src="results/figures/dotplot_0.50_AL02.png" width="100%" height="400px" style="border:none;"></iframe>
+
+<iframe src="results/figures/dotplot_0.50_AL03.png" width="100%" height="400px" style="border:none;"></iframe>
+
+### 3.9 Differential Expression Analysis
+
+<iframe src="results/figures/dotplot_ranked_genes_AL03.png" width="100%" height="400px" style="border:none;"></iframe>
+
+<iframe src="results/figures/dotplot_ranked_genes_AL02.png" width="100%" height="400px" style="border:none;"></iframe>
+
+**The table below shows the top 10 differentially expressed genes per cluster**
+
+<iframe src="results/figures/top10_degs_all_clusters_AL02.html" width="100%" height="500px" style="border:none;"></iframe>
+
+<iframe src="results/figures/top10_degs_all_clusters_AL03.html" width="100%" height="500px" style="border:none;"></iframe>
