@@ -120,6 +120,9 @@ def reassess_qc(adata, sample_id):
 
 
 def annotation_and_identify_markers(adata, sample_id):
+
+    # Decide which resolution to use for cell-type annotation 
+
     for res in [0.02, 0.5, 2.0]:
         sc.tl.leiden(adata,
                      key_added = f"leiden_res_{res:4.2f}", resolution = res, flavor = "igraph"

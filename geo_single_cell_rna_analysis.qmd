@@ -243,7 +243,9 @@ snakemake -s scanpy.smk --cores 8 -p
 
 <iframe src="results/figures/umap_mt_counts_AL03.pdf" width="100%" height="400px" style="border:none;"></iframe>
 
-### 3.8 Manual Cell-type annotation and Differential Gene Expression Analysis
+### 3.8 Cell-type annotation and Differential Gene Expression Analysis
+
+**The final step of the analysis is to annotate the clusters and perform differential gene expression analysis (DGE).**
 
 **Before we begin to annotate our clusters, we have to decide on the resolution of the leiden algorithm. The higher the resolution, the more distinct clusters we get, and vice versa. This means that if we pick too low of a resolution, we can only look at broader cell-types (B-cells, T-cells, etc), versus if we pick too large a resolution, we risk segregating identical cell-types into different clusters. I plotted the different resolutions below and went with 0.5, but we could always change this depending on our results.**
 
@@ -256,11 +258,21 @@ snakemake -s scanpy.smk --cores 8 -p
 <iframe src="results/figures/umap_resolutions_AL03.pdf" width="100%" height="400px" style="border:none;"></iframe>
 
 
-**Cell-type annotation is performed by using a set of marker genes, which are genes that are often highly expressed in a particular cell-type, to label our clusters. I used the scanpy tutorial's marker gene set, which was obtained from the single-cell best practice web book I mentioned earlier.**
+
+**Cell-type annotation involves using a set of marker genes, which are genes that are often highly expressed in a particular cell-type, to label our clusters. We use scanpy's rank_genes_groups() function, which performs the differential expression by using the Wilcoxon ranked sum test to determine which genes in each cluster are significantly differently expressed than in other clusters.** 
+
+**We can either perform manual cell-type annotation using a pre-defined list of marker genes, or we can use differentially expressed genes as our markers. I decided to use the DE genes as markers. **
+
+**Dotplot of DE Genes AL02**
+
+<iframe src="results/figures/dotplot_ranked_genes_AL02.png" width="100%" height="400px" style="border:none;"></iframe>
 
 
+**Dotplot of DE Genes AL03**
 
-<iframe src="results/figures/umap_annotations_AL02.pdf" width="100%" height="400px" style="border:none;"></iframe>
+<iframe src="results/figures/dotplot_ranked_genes_AL03.png" width="100%" height="400px" style="border:none;"></iframe>
+
+
 
 <iframe src="results/figures/umap_annotations_AL02.pdf" width="100%" height="400px" style="border:none;"></iframe>
 
@@ -268,20 +280,15 @@ snakemake -s scanpy.smk --cores 8 -p
 
 
 
-<iframe src="results/figures/dotplot_0.50_AL02.png" width="100%" height="400px" style="border:none;"></iframe>
-
-<iframe src="results/figures/dotplot_0.50_AL03.png" width="100%" height="400px" style="border:none;"></iframe>
-
-
-<iframe src="results/figures/dotplot_ranked_genes_AL03.png" width="100%" height="400px" style="border:none;"></iframe>
-
-<iframe src="results/figures/dotplot_ranked_genes_AL02.png" width="100%" height="400px" style="border:none;"></iframe>
-
-
-
-
 **The table below shows the top 10 differentially expressed genes per cluster**
+
+**AL02**
 
 <iframe src="results/figures/top10_degs_all_clusters_AL02.html" width="100%" height="500px" style="border:none;"></iframe>
 
+**AL03**
+
 <iframe src="results/figures/top10_degs_all_clusters_AL03.html" width="100%" height="500px" style="border:none;"></iframe>
+
+
+**All in all, I have performed a full Single-Cell RNA sequencing analysis starting from the raw sequencing data, performing read alignment/transcript quantification, and carried out post-processing steps with the python package Scanpy. All the scripts necessary to run these analyses and generate all subsequent plots are located in my github repo found here [SC_RNA_Seq Github Repo](https://github.com/elittlestone/SC_RNA_SEQ).**
