@@ -191,6 +191,8 @@ snakemake -s scanpy.smk --cores 8 -p
 
 **Dimensionality reduction involves taking our selected highly-variable genes, and performing some computational steps like principal component analysis (PCA) in order to essentially collapse these genes into a smaller subset of explainers or 'dimensions/axes' that account for the variation we see in expression levels of genes between cells. This reduces the computational complexity even further for the downstream step of clustering. Scanpy's function .pca computes this for us.**
 
+**We want to select the principal components which explain the majority of the variation in the data, while not including too many components that are likely to introduce statistical noise. Looking at our PCA scree plots, we see that for both samples, the first 10 principal components capture the majority of the variation in our gene expression data. This heuristic of selecting the principal components before which you see a flattening of the curve is often employed when selecting PCs.**
+
 **PCA plot AL02**
 
 <iframe src="results/figures/pca_variance_ratio_AL02.pdf" width="100%" height="400px" style="border:none;"></iframe>
@@ -223,13 +225,21 @@ snakemake -s scanpy.smk --cores 8 -p
 
 ### 3.7 Re-assess QC and Cell-filtering 
 
-**In order to **
+**Now that we have our clusters, we can check to see if the QC steps we performed earlier were successful. We can look at our UMAP plots to see if we have distinct clusters that are high in doublets, mitochondrial %, or have very low or high gene/UMI counts. An example would be if we have a cluster that has very high mitochondrial %, this cluster is likely not representative of a distinct cell-type but rather is a reflection of a collection of stressed/dying cells.**
+
+**UMAP Doublets AL02**
 
 <iframe src="results/figures/umap_doublet_qc_AL02.pdf" width="100%" height="400px" style="border:none;"></iframe>
 
+**UMAP Mito Counts AL02**
+
 <iframe src="results/figures/umap_mt_counts_AL02.pdf" width="100%" height="400px" style="border:none;"></iframe>
 
+**UMAP Doublets AL03**
+
 <iframe src="results/figures/umap_doublet_qc_AL03.pdf" width="100%" height="400px" style="border:none;"></iframe>
+
+**UMAP Mito Counts AL03**
 
 <iframe src="results/figures/umap_mt_counts_AL03.pdf" width="100%" height="400px" style="border:none;"></iframe>
 
