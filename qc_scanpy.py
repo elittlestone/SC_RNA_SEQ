@@ -163,24 +163,11 @@ def annotation_and_identify_markers(adata, sample_id):
     marker_genes_in_anndata = {cell_type: [gene for gene in genes if gene in adata.var_names]
                                for cell_type, genes in marker_genes_all.items()}
     
-    #sc.pl.dotplot(adata, marker_genes_in_anndata, 
-    #              groupby="leiden_res_0.02", 
-    #              standard_scale = "var",
-    #              save = f"_0.02_{sample_id}.pdf")
-    #
 
     sc.pl.dotplot(adata, marker_genes_in_anndata, groupby = "leiden_res_0.50",
                   standard_scale = "var",
                   save = f"_0.50_{sample_id}.pdf")
 
-    sc.pl.dotplot(adata, marker_genes_in_anndata, 
-                  groupby="leiden_res_0.02", 
-                  standard_scale = "var",
-                  save = f"0.02_{sample_id}.png")
-
-    sc.pl.dotplot(adata, marker_genes_in_anndata, groupby = "leiden_res_0.50",
-                  standard_scale = "var",
-                  save = f"0.50_{sample_id}.png")
 
     sc.tl.marker_gene_overlap(adata, marker_genes_in_anndata, key = "rank_genes_groups")
 
