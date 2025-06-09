@@ -1,13 +1,15 @@
-import scrublet as scr
 import scanpy as sc
+import scanorama
 import argparse
+import scrublet as scr
 import pandas as pd
 import os
 
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--input_h5ad", required=True)
-    parser.add_argument("--sample_id", required=True)
+    parser.add_argument("--sample_id1", required=True)
+    parser.add_argument("--sample_id2", required=True)
     args = parser.parse_args()
     
     # Create dirs 
@@ -22,6 +24,7 @@ def main():
     doublet_detection(adata)
     normalization(adata)
     feature_selection(adata, sample_id)
+    adata_combined = integrate_samples(adata1, adata2)
     dimensionality_reduction(adata, sample_id)
     nearest_neighbor(adata, sample_id)
     clustering(adata, sample_id)
@@ -74,7 +77,9 @@ def normalization(adata):
 def feature_selection(adata, sample_id):
     sc.pp.highly_variable_genes(adata, n_top_genes = 2000, batch_key = "sample")
     sc.pl.highly_variable_genes(adata, save = f"_{sample_id}.png")
-    
+
+def integrate_samples(adta, sample_id1, sample_id2):
+    pass
 
 def dimensionality_reduction(adata, sample_id):
     sc.tl.pca(adata)
@@ -208,4 +213,5 @@ def annotation_and_identify_markers(adata, sample_id):
 
 if __name__ == "__main__":
     main()
+
 

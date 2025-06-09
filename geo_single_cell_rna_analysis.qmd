@@ -43,7 +43,7 @@ git push origin main
 
 ```{bash Add Packages, eval = F, echo = T}
 pixi add python snakemake sra-tools scanpy anndata cellxgene scikit-image \
-pandas quarto anndata 
+pandas quarto anndata harmony
 ```
 
 **For the rest of the analysis, our commands can either be run via pixi by doing: *pixi run 'executable'* or by launching a subshell with *pixi s* and running commands as normal.**
@@ -261,20 +261,27 @@ snakemake -s scanpy.smk --cores 8 -p
 
 **Cell-type annotation involves using a set of marker genes, which are genes that are often highly expressed in a particular cell-type, to label our clusters. We use scanpy's rank_genes_groups() function, which performs the differential expression by using the Wilcoxon ranked sum test to determine which genes in each cluster are significantly differently expressed than in other clusters.** 
 
-**We can either perform manual cell-type annotation using a pre-defined list of marker genes, or we can use differentially expressed genes as our markers. I decided to use the DE genes as markers. **
+**We can either perform manual cell-type annotation using a pre-defined list of marker genes, or we can use differentially expressed genes as our markers.**
+
+**The dotplots below help to visualize which genes are most highly expressed in each cluster. The size of the dot represents how many cells in the cluster express that particular gene, while the color is the mean expression level of that gene within that cluster.**
 
 **Dotplot of DE Genes AL02**
 
 <iframe src="results/figures/dotplot_ranked_genes_AL02.png" width="100%" height="400px" style="border:none;"></iframe>
-
 
 **Dotplot of DE Genes AL03**
 
 <iframe src="results/figures/dotplot_ranked_genes_AL03.png" width="100%" height="400px" style="border:none;"></iframe>
 
 
+**In order to annotate the cell-types, I used the score_marker_genes() method from scanpy to find the highest expressed gene per cluster, then used a mapping between known marker genes and these highest expressed genes to classify the cluster.**
+
+
+**AL02 UMAP Cell-type Annotation**
 
 <iframe src="results/figures/umap_annotations_AL02.pdf" width="100%" height="400px" style="border:none;"></iframe>
+
+**AL03 UMAP Cell-type Annotation**
 
 <iframe src="results/figures/umap_annotations_AL03.pdf" width="100%" height="400px" style="border:none;"></iframe>
 
@@ -289,6 +296,20 @@ snakemake -s scanpy.smk --cores 8 -p
 **AL03**
 
 <iframe src="results/figures/top10_degs_all_clusters_AL03.html" width="100%" height="500px" style="border:none;"></iframe>
+
+
+### 4 Integration
+
+**After completing the SC RNA-seq analysis separately for each sample, we can also analyze them together by performing integration and batch correction, then doing clustering and cell-type annotation on the combined samples. We keep the filtered/QC steps and then write these filtered annotation data objects to .h5ad files, and then perform integration and batch correction, as well as the downstream steps of clustering, annotation, and DGE analysis. **
+
+
+
+
+
+
+
+
+
 
 
 **All in all, I have performed a full Single-Cell RNA sequencing analysis starting from the raw sequencing data, performing read alignment/transcript quantification, and carried out post-processing steps with the python package Scanpy. All the scripts necessary to run these analyses and generate all subsequent plots are located in my github repo found here [SC_RNA_Seq Github Repo](https://github.com/elittlestone/SC_RNA_SEQ).**

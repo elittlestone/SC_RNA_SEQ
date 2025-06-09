@@ -9,3 +9,6 @@ samples:
 reference: "data/cellranger/refdata-gex-GRCh38-2024-A"
 
 fastq_dir: "data/sra"
+
+integrated_sample_id: "combined"
+
