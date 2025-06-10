@@ -9,6 +9,7 @@ rule all:
     expand("results/figures/scatter_{sample}.png", sample = SAMPLES),
     expand("results/figures/filter_genes_dispersion_{sample}.png", sample = SAMPLES),
     expand("results/figures/pca_variance_ratio_{sample}.pdf", sample = SAMPLES),
+    expand("results/{sample}_post_qc_filtered.h5ad", sample = SAMPLES),
     expand("results/figures/umap_neighbors_{sample}.png", sample = SAMPLES),
     expand("results/figures/umap_leiden_{sample}.pdf", sample = SAMPLES),
     expand("results/figures/umap_doublet_qc_{sample}.pdf", sample = SAMPLES),
@@ -18,6 +19,7 @@ rule all:
     expand("results/figures/dotplot_ranked_genes_{sample}.png", sample = SAMPLES),
     expand("results/figures/umap_annotations_{sample}.pdf", sample = SAMPLES),
     expand("results/figures/top10_degs_all_clusters_{sample}.html", sample = SAMPLES),
+
 rule run_scanpy:
   input:
     matrix_file = "{sample}_filtered_feature_bc_matrix.h5",
@@ -44,6 +46,7 @@ rule run_qc:
     scatter_plot = "results/figures/scatter_{sample}.png",
     highly_variable_genes = "results/figures/filter_genes_dispersion_{sample}.png",
     pca_variance_ratio = "results/figures/pca_variance_ratio_{sample}.pdf",
+    post_qc_h5ad = "results/{sample}_post_qc_filtered.h5ad",
     neighbors = "results/figures/umap_neighbors_{sample}.png",
     leiden = "results/figures/umap_leiden_{sample}.pdf",
     reassess_qc_doublets = "results/figures/umap_doublet_qc_{sample}.pdf",

@@ -6,8 +6,8 @@ import os
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--input_h5ad", required=True)
-    parser.add_argument("--sample_id", required=True)
+    parser.add_argument("--input_h5ad", required = True)
+    parser.add_argument("--sample_id", required = True)
     args = parser.parse_args()
     
     # Create dirs 
@@ -20,6 +20,7 @@ def main():
     # Post-processing steps go here
     filter_cells(adata, sample_id)
     doublet_detection(adata)
+    write_anndata_outfiles(adata, sample_id)
     normalization(adata)
     feature_selection(adata, sample_id)
     dimensionality_reduction(adata, sample_id)
@@ -89,7 +90,8 @@ def dimensionality_reduction(adata, sample_id):
     #          save = f"_{sample_id}")
     
 
-    
+def write_anndata_outfiles(adata, sample_id):
+    adata.write(f"results/{sample_id}_post_qc_filtered.h5ad")
 
 def nearest_neighbor(adata, sample_id):
     sc.pp.neighbors(adata, n_pcs = 10)
